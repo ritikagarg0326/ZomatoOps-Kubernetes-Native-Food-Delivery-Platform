@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vero-portfolio-deployment
+  namespace: vero-portfolio
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vero-portfolio
+  template:
+    metadata:
+      labels:
+        app: vero-portfolio
+    spec:
+      containers:
+        - name: vero-portfolio
+          image: veroportfolio:latest
+          ports:
+            - containerPort: 4040
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"

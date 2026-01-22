@@ -1,0 +1,110 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #0f1117;
+  color: #e5e7eb;
+}
+
+/* Navbar */
+.custom-nav {
+  background-color: #0f1117;
+  border-bottom: 1px solid #1f2937;
+}
+
+.navbar-brand,
+.nav-link {
+  color: #e5e7eb !important;
+}
+
+.nav-link:hover {
+  color: #a855f7 !important;
+}
+
+/* Hero */
+.masthead {
+  padding: 9rem 0 6rem;
+  background: linear-gradient(135deg, #0f1117, #151922);
+}
+
+.profile-pic {
+  border: 4px solid #7c3aed;
+}
+
+.experience-text {
+  color: #a855f7;
+  font-weight: 500;
+}
+
+.tech-stack {
+  color: #9ca3af;
+  font-size: 1.05rem;
+}
+
+/* Sections */
+.page-section {
+  padding: 5rem 0;
+}
+
+.section-title {
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.divider-custom {
+  height: 3px;
+  width: 60px;
+  background-color: #7c3aed;
+  margin: 0 auto 3rem;
+  border-radius: 6px;
+}
+
+/* Projects */
+.project-card {
+  background-color: #151922;
+  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-6px);
+}
+
+.project-card h5 {
+  color: #a855f7;
+}
+
+.project-card p {
+  font-size: 0.95rem;
+  color: #cbd5f5;
+}
+
+.badge {
+  background-color: #1f2937;
+  color: #a855f7;
+  margin: 0.2rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+}
+
+/* About */
+.about-section {
+  background-color: #111827;
+}
+
+/* Links */
+a {
+  color: #a855f7;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+.footer {
+  background-color: #0f1117;
+  color: #9ca3af;
+}
