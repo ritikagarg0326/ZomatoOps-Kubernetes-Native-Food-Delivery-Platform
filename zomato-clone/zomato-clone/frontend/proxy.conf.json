@@ -1,0 +1,26 @@
+{
+  "/api/users": {
+    "target": "http://localhost:8001",
+    "secure": false,
+    "pathRewrite": {
+      "^/api/users": ""
+    },
+    "logLevel": "debug"
+  },
+  "/api/restaurants": {
+    "target": "http://localhost:8002",
+    "secure": false,
+    "pathRewrite": {
+      "^/api/restaurants": ""
+    },
+    "logLevel": "debug"
+  },
+  "/api/orders": {
+    "target": "http://localhost:8003",
+    "secure": false,
+    "pathRewrite": {
+      "^/api/orders": ""
+    },
+    "logLevel": "debug"
+  }
+}
