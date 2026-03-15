@@ -1,0 +1,117 @@
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero__overlay"></div>
+  <div class="hero__content">
+    <h1>Discover the best food &amp; drinks</h1>
+    <p>Find restaurants, cafes, and nightlife near you</p>
+
+    <div class="search-box">
+      <div class="search-box__city">
+        <i class="fas fa-map-marker-alt"></i>
+        <select [(ngModel)]="searchCity">
+          <option value="">Select City</option>
+          @for (city of cities; track city) {
+            <option [value]="city">{{ city }}</option>
+          }
+        </select>
+      </div>
+      <div class="search-box__divider"></div>
+      <div class="search-box__query">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          placeholder="Search for restaurants, cuisine, or dishes"
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="search()"
+        />
+      </div>
+      <button class="btn btn--primary" (click)="search()">Search</button>
+    </div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories">
+  <div class="container">
+    <h2 class="section-heading">What are you looking for?</h2>
+    <div class="categories__grid">
+      @for (cat of categories; track cat.name) {
+        <a [routerLink]="cat.route.split('?')[0]" class="category-card"
+           [style.--accent-color]="cat.color"
+           [style.--accent-bg]="cat.bg">
+          <div class="category-card__icon">
+            <i [class]="cat.icon"></i>
+          </div>
+          <span>{{ cat.name }}</span>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Featured Restaurants -->
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-heading">Popular Restaurants</h2>
+      <a routerLink="/dining" class="btn btn--ghost btn--sm">View all <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    @if (loading()) {
+      <div class="spinner"><div class="spin"></div></div>
+    } @else if (featuredRestaurants().length === 0) {
+      <div class="empty-state">
+        <i class="fas fa-store-slash"></i>
+        <h3>No restaurants found</h3>
+        <p>Be the first to add a restaurant!</p>
+      </div>
+    } @else {
+      <div class="restaurant-grid">
+        @for (r of featuredRestaurants(); track r.id) {
+          <a [routerLink]="['/restaurant', r.id, 'home']" class="card restaurant-card">
+            <div class="restaurant-card__img">
+              <img [src]="r.cover_image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600'"
+                   [alt]="r.name" loading="lazy" />
+              <span class="restaurant-card__badge" [class]="'badge--' + (r.category === 'nightlife' ? 'blue' : 'orange')">
+                {{ r.category }}
+              </span>
+            </div>
+            <div class="restaurant-card__body">
+              <h3>{{ r.name }}</h3>
+              <p class="cuisine">{{ r.cuisine_types.join(', ') }}</p>
+              <div class="restaurant-card__meta">
+                <span class="rating"><i class="fas fa-star"></i> {{ r.average_rating }}</span>
+                <span class="reviews">({{ r.total_reviews }} reviews)</span>
+                <span class="price">{{ getPriceLabel(r.price_range) }}</span>
+              </div>
+              <p class="location"><i class="fas fa-map-marker-alt"></i> {{ r.location.city }}</p>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- App Promo Banner -->
+<section class="promo-banner">
+  <div class="container">
+    <div class="promo-banner__content">
+      <div class="promo-banner__text">
+        <h2>Get the Zomato app</h2>
+        <p>Order food online, discover new restaurants, and more — right on your phone.</p>
+        <div class="promo-banner__buttons">
+          <a routerLink="/get-the-app" class="btn btn--primary btn--lg">
+            <i class="fab fa-google-play"></i> Google Play
+          </a>
+          <a routerLink="/get-the-app" class="btn btn--outline btn--lg">
+            <i class="fab fa-apple"></i> App Store
+          </a>
+        </div>
+      </div>
+      <div class="promo-banner__image">
+        <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400" alt="App preview" />
+      </div>
+    </div>
+  </div>
+</section>

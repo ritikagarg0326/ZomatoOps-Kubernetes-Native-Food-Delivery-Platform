@@ -1,0 +1,123 @@
+version: "3.9"
+
+services:
+
+  mongodb-user:
+    image: mongo:7
+    container_name: mongodb-user
+    volumes:
+      - mongo-user-data:/data/db
+    networks:
+      - zomato-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb-restaurant:
+    image: mongo:7
+    container_name: mongodb-restaurant
+    volumes:
+      - mongo-restaurant-data:/data/db
+    networks:
+      - zomato-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb-order:
+    image: mongo:7
+    container_name: mongodb-order
+    volumes:
+      - mongo-order-data:/data/db
+    networks:
+      - zomato-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service
+    environment:
+      - MONGODB_URL=mongodb://mongodb-user:27017
+      - DATABASE_NAME=user_db
+      - SECRET_KEY=zomato-super-secret-key-change-in-production-2024
+    depends_on:
+      mongodb-user:
+        condition: service_healthy
+    networks:
+      - zomato-net
+    restart: unless-stopped
+
+  restaurant-service:
+    build:
+      context: ./restaurant-service
+    container_name: restaurant-service
+    environment:
+      - MONGODB_URL=mongodb://mongodb-restaurant:27017
+      - DATABASE_NAME=restaurant_db
+      - SECRET_KEY=zomato-super-secret-key-change-in-production-2024
+    depends_on:
+      mongodb-restaurant:
+        condition: service_healthy
+    networks:
+      - zomato-net
+    restart: unless-stopped
+
+  order-service:
+    build:
+      context: ./order-service
+    container_name: order-service
+    environment:
+      - MONGODB_URL=mongodb://mongodb-order:27017
+      - DATABASE_NAME=order_db
+      - SECRET_KEY=zomato-super-secret-key-change-in-production-2024
+    depends_on:
+      mongodb-order:
+        condition: service_healthy
+    networks:
+      - zomato-net
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: zomato-frontend
+    ports:
+      - "4200:4200"
+    networks:
+      - zomato-net
+    restart: on-failure
+    
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: zomato-nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - user-service
+      - restaurant-service
+      - order-service
+      - frontend
+    networks:
+      - zomato-net
+    restart: unless-stopped
+
+volumes:
+  mongo-user-data:
+  mongo-restaurant-data:
+  mongo-order-data:
+
+networks:
+  zomato-net:
+    driver: bridge
