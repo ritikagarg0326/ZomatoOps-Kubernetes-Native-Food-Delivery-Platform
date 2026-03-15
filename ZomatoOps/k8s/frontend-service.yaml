@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zomato-frontend
+  namespace: zomato-dev
+spec:
+  selector:
+    app: zomato-frontend
+  ports:
+    - port: 4200
+      targetPort: 4200
+  type: ClusterIP

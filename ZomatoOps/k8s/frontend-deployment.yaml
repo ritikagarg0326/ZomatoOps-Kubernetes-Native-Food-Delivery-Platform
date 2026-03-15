@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zomato-frontend
+  namespace: zomato-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zomato-frontend
+  template:
+    metadata:
+      labels:
+        app: zomato-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: vero026/zomato-frontend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4200

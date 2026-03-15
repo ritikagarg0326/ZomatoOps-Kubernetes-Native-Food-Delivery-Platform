@@ -1,0 +1,48 @@
+name: ZomatoOps CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build User Service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/zomato-user-service:latest ./user-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/zomato-user-service:latest
+
+      - name: Build Restaurant Service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/zomato-restaurant-service:latest ./restaurant-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/zomato-restaurant-service:latest
+
+      - name: Build Order Service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/zomato-order-service:latest ./order-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/zomato-order-service:latest
+
+      - name: Build Frontend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/zomato-frontend:latest ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/zomato-frontend:latest
+
+      - name: Build Nginx
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/zomato-nginx:latest ./nginx
+          docker push ${{ secrets.DOCKER_USERNAME }}/zomato-nginx:latest
