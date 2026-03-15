@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zomato-ingress
+  namespace: zomato-dev
+spec:
+  rules:
+  - host: zomato.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: zomato-nginx
+            port:
+              number: 80

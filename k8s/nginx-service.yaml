@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zomato-nginx
+  namespace: zomato-dev
+spec:
+  selector:
+    app: zomato-nginx
+  ports:
+    - port: 80
+      targetPort: 80
+  type: NodePort

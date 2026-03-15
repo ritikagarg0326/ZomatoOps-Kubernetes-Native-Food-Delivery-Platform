@@ -1,0 +1,166 @@
+<div class="add-restaurant-page">
+  <div class="container">
+    <div class="page-title">
+      <h1><i class="fas fa-store"></i> List Your Restaurant</h1>
+      <p>Reach millions of food lovers in your city</p>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="stepper">
+      @for (s of [1,2,3]; track s) {
+        <div class="stepper__item" [class.active]="step() === s" [class.done]="step() > s">
+          <div class="stepper__circle">
+            @if (step() > s) { <i class="fas fa-check"></i> }
+            @else { {{ s }} }
+          </div>
+          <span>{{ s === 1 ? 'Basic Info' : s === 2 ? 'Location' : 'Hours & Media' }}</span>
+        </div>
+        @if (s < 3) { <div class="stepper__line" [class.done]="step() > s"></div> }
+      }
+    </div>
+
+    <div class="card form-card">
+
+      <!-- Step 1: Basic Info -->
+      @if (step() === 1) {
+        <h2>Basic Information</h2>
+        <div class="form-group">
+          <label>Restaurant Name *</label>
+          <input type="text" [(ngModel)]="form.name" placeholder="e.g. The Grand Spice Kitchen" required />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="form.description" rows="3" placeholder="Tell customers what makes your place special..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category *</label>
+            <select [(ngModel)]="form.category">
+              @for (c of categories; track c) {
+                <option [value]="c">{{ c }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price Range *</label>
+            <select [(ngModel)]="form.price_range">
+              @for (p of priceRanges; track p.value) {
+                <option [value]="p.value">{{ p.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Cuisine Types</label>
+          <input type="text" [(ngModel)]="form.cuisine_types" placeholder="e.g. Indian, Mughlai, North Indian (comma-separated)" />
+        </div>
+        <div class="form-group">
+          <label>Features / Amenities</label>
+          <input type="text" [(ngModel)]="form.features" placeholder="e.g. WiFi, Parking, Outdoor Seating (comma-separated)" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" [(ngModel)]="form.phone" placeholder="+91-80-12345678" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="form.email" placeholder="info@restaurant.com" />
+          </div>
+        </div>
+      }
+
+      <!-- Step 2: Location -->
+      @if (step() === 2) {
+        <h2>Location Details</h2>
+        <div class="form-group">
+          <label>Street Address *</label>
+          <input type="text" [(ngModel)]="form.location.address" placeholder="e.g. 12 MG Road, Indiranagar" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" [(ngModel)]="form.location.city" placeholder="Bangalore" required />
+          </div>
+          <div class="form-group">
+            <label>State *</label>
+            <input type="text" [(ngModel)]="form.location.state" placeholder="Karnataka" required />
+          </div>
+        </div>
+        <div class="form-group" style="max-width:200px">
+          <label>ZIP / PIN Code *</label>
+          <input type="text" [(ngModel)]="form.location.zip_code" placeholder="560001" required />
+        </div>
+      }
+
+      <!-- Step 3: Hours & Media -->
+      @if (step() === 3) {
+        <h2>Operating Hours &amp; Media</h2>
+        <div class="form-group">
+          <label>Cover Image URL</label>
+          <input type="url" [(ngModel)]="form.cover_image_url" placeholder="https://..." />
+        </div>
+        <div class="form-group">
+          <label>Website</label>
+          <input type="url" [(ngModel)]="form.website" placeholder="https://yourrestaurant.com" />
+        </div>
+        <h3 class="hours-title">Operating Hours</h3>
+        <div class="hours-grid">
+          <div class="hours-row">
+            <span class="day-label">Monday</span>
+            <input type="text" [(ngModel)]="form.operating_hours.monday" placeholder="09:00-22:00 or Closed" />
+          </div>
+          <div class="hours-row">
+            <span class="day-label">Tuesday</span>
+            <input type="text" [(ngModel)]="form.operating_hours.tuesday" placeholder="09:00-22:00 or Closed" />
+          </div>
+          <div class="hours-row">
+            <span class="day-label">Wednesday</span>
+            <input type="text" [(ngModel)]="form.operating_hours.wednesday" placeholder="09:00-22:00 or Closed" />
+          </div>
+          <div class="hours-row">
+            <span class="day-label">Thursday</span>
+            <input type="text" [(ngModel)]="form.operating_hours.thursday" placeholder="09:00-22:00 or Closed" />
+          </div>
+          <div class="hours-row">
+            <span class="day-label">Friday</span>
+            <input type="text" [(ngModel)]="form.operating_hours.friday" placeholder="09:00-23:00 or Closed" />
+          </div>
+          <div class="hours-row">
+            <span class="day-label">Saturday</span>
+            <input type="text" [(ngModel)]="form.operating_hours.saturday" placeholder="09:00-23:00 or Closed" />
+          </div>
+          <div class="hours-row">
+            <span class="day-label">Sunday</span>
+            <input type="text" [(ngModel)]="form.operating_hours.sunday" placeholder="10:00-21:00 or Closed" />
+          </div>
+        </div>
+      }
+
+      <!-- Navigation -->
+      <div class="form-actions">
+        @if (step() > 1) {
+          <button class="btn btn--ghost" (click)="prevStep()">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+        } @else {
+          <div></div>
+        }
+
+        @if (step() < 3) {
+          <button class="btn btn--primary" (click)="nextStep()" [disabled]="step() === 1 && !form.name">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        } @else {
+          <button class="btn btn--primary btn--lg" (click)="onSubmit()" [disabled]="saving()">
+            @if (saving()) {
+              <i class="fas fa-spinner fa-spin"></i> Listing...
+            } @else {
+              <i class="fas fa-check"></i> List My Restaurant
+            }
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

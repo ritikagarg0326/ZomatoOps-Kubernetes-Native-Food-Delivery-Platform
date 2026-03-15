@@ -1,0 +1,113 @@
+<div class="profile-page">
+  <div class="container">
+    <!-- Header -->
+    <div class="profile-header">
+      <div class="avatar">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div>
+        <h1>{{ auth.currentUser()?.name }}</h1>
+        <p>{{ auth.currentUser()?.email }}</p>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
+        <i class="fas fa-user"></i> My Profile
+      </button>
+      <button class="tab" [class.active]="activeTab === 'orders'" (click)="activeTab = 'orders'">
+        <i class="fas fa-shopping-bag"></i> My Orders
+        @if (orders().length > 0) {
+          <span class="tab-badge">{{ orders().length }}</span>
+        }
+      </button>
+    </div>
+
+    <!-- Profile Tab -->
+    @if (activeTab === 'profile') {
+      <div class="tab-content card">
+        <h2>Personal Information</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" [(ngModel)]="editForm.name" placeholder="Your name" />
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" [(ngModel)]="editForm.phone" placeholder="+91 9876543210" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" [(ngModel)]="editForm.city" placeholder="Your city" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [value]="auth.currentUser()?.email" disabled />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Delivery Address</label>
+          <input type="text" [(ngModel)]="editForm.address" placeholder="Your default delivery address" />
+        </div>
+        <button class="btn btn--primary" (click)="saveProfile()" [disabled]="saving()">
+          @if (saving()) { <i class="fas fa-spinner fa-spin"></i> Saving... }
+          @else { <i class="fas fa-save"></i> Save Changes }
+        </button>
+      </div>
+    }
+
+    <!-- Orders Tab -->
+    @if (activeTab === 'orders') {
+      <div class="tab-content">
+        @if (ordersLoading()) {
+          <div class="spinner"><div class="spin"></div></div>
+        } @else if (orders().length === 0) {
+          <div class="empty-state card">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>No orders yet</h3>
+            <p>Time to explore some restaurants!</p>
+            <a routerLink="/dining" class="btn btn--primary">Browse Restaurants</a>
+          </div>
+        } @else {
+          <div class="orders-list">
+            @for (order of orders(); track order.id) {
+              <div class="card order-card">
+                <div class="order-card__header">
+                  <div>
+                    <h3>{{ order.restaurant_name }}</h3>
+                    <p class="order-date">{{ order.created_at | date:'medium' }}</p>
+                  </div>
+                  <div class="order-status badge badge--{{ getStatusColor(order.status) }}">
+                    <i class="fas {{ getStatusIcon(order.status) }}"></i>
+                    {{ order.status | titlecase }}
+                  </div>
+                </div>
+                <div class="order-items">
+                  @for (item of order.items; track item.item_id) {
+                    <span>{{ item.quantity }}× {{ item.name }}</span>
+                  }
+                </div>
+                <div class="order-card__footer">
+                  <span class="total">Total: <strong>₹{{ order.total }}</strong></span>
+                  <div class="actions">
+                    <a [routerLink]="['/restaurant', order.restaurant_id, 'menu']" class="btn btn--ghost btn--sm">
+                      Reorder
+                    </a>
+                    @if (order.status === 'pending' || order.status === 'confirmed') {
+                      <button class="btn btn--outline btn--sm" (click)="cancelOrder(order.id)">
+                        Cancel
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

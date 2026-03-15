@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-service
+  namespace: zomato-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restaurant-service
+  template:
+    metadata:
+      labels:
+        app: restaurant-service
+    spec:
+      containers:
+      - name: restaurant-service
+        image: vero026/zomato-restaurant-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5001
+
+        env:
+        - name: MONGODB_URL
+          value: mongodb://mongodb-restaurant:27017
+        - name: DATABASE_NAME
+          value: restaurant_db
+        - name: SECRET_KEY
+          value: zomato-super-secret-key-change-in-production-2024
