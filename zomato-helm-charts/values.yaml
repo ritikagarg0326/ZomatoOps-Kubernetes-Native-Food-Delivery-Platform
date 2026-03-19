@@ -1,0 +1,60 @@
+namespace: zomato-dev-helm
+
+userService:
+  image: vero026/zomato-user-service
+  tag: latest
+  replicas: 1
+  port: 8001
+  env:
+    mongodbUrl: mongodb://mongodb-user:27017
+    databaseName: user_db
+    secretKey: zomato-super-secret-key-change-in-production-2024
+
+restaurantService:
+  image: vero026/zomato-restaurant-service
+  tag: latest
+  replicas: 1
+  port: 8002
+  env:
+    mongodbUrl: mongodb://mongodb-restaurant:27017
+    databaseName: restaurant_db
+    secretKey: zomato-super-secret-key-change-in-production-2024
+
+orderService:
+  image: vero026/zomato-order-service
+  tag: latest
+  replicas: 1
+  port: 8003
+  env:
+    mongodbUrl: mongodb://mongodb-order:27017
+    databaseName: order_db
+    secretKey: zomato-super-secret-key-change-in-production-2024
+
+frontend:
+  image: vero026/zomato-frontend
+  tag: latest
+  replicas: 1
+  port: 4200
+
+nginx:
+  image: vero026/zomato-nginx
+  tag: latest
+  replicas: 1
+  port: 80
+  serviceType: NodePort
+
+mongodb:
+  image: mongo
+  tag: "7"
+  storage: 1Gi
+  startupProbe:
+    failureThreshold: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+ingress:
+  host: zomato.local

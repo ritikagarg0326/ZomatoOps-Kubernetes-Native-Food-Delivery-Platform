@@ -1,0 +1,215 @@
+# MongoDB User
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-user-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mongodb.storage }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-user
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb-user
+  template:
+    metadata:
+      labels:
+        app: mongodb-user
+    spec:
+      containers:
+      - name: mongodb
+        image: {{ .Values.mongodb.image }}:{{ .Values.mongodb.tag }}
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /data/db
+        startupProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - db.adminCommand('ping')
+          failureThreshold: {{ .Values.mongodb.startupProbe.failureThreshold }}
+          periodSeconds: {{ .Values.mongodb.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.mongodb.startupProbe.timeoutSeconds }}
+        livenessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - db.adminCommand('ping')
+          initialDelaySeconds: {{ .Values.mongodb.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.mongodb.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.mongodb.livenessProbe.timeoutSeconds }}
+      volumes:
+      - name: mongo-storage
+        persistentVolumeClaim:
+          claimName: mongo-user-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-user
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: mongodb-user
+  ports:
+    - port: 27017
+      targetPort: 27017
+  type: ClusterIP
+---
+# MongoDB Restaurant
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-restaurant-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mongodb.storage }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-restaurant
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb-restaurant
+  template:
+    metadata:
+      labels:
+        app: mongodb-restaurant
+    spec:
+      containers:
+      - name: mongodb
+        image: {{ .Values.mongodb.image }}:{{ .Values.mongodb.tag }}
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /data/db
+        startupProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - db.adminCommand('ping')
+          failureThreshold: {{ .Values.mongodb.startupProbe.failureThreshold }}
+          periodSeconds: {{ .Values.mongodb.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.mongodb.startupProbe.timeoutSeconds }}
+        livenessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - db.adminCommand('ping')
+          initialDelaySeconds: {{ .Values.mongodb.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.mongodb.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.mongodb.livenessProbe.timeoutSeconds }}
+      volumes:
+      - name: mongo-storage
+        persistentVolumeClaim:
+          claimName: mongo-restaurant-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-restaurant
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: mongodb-restaurant
+  ports:
+    - port: 27017
+      targetPort: 27017
+  type: ClusterIP
+---
+# MongoDB Order
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-order-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mongodb.storage }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-order
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb-order
+  template:
+    metadata:
+      labels:
+        app: mongodb-order
+    spec:
+      containers:
+      - name: mongodb
+        image: {{ .Values.mongodb.image }}:{{ .Values.mongodb.tag }}
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /data/db
+        startupProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - db.adminCommand('ping')
+          failureThreshold: {{ .Values.mongodb.startupProbe.failureThreshold }}
+          periodSeconds: {{ .Values.mongodb.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.mongodb.startupProbe.timeoutSeconds }}
+        livenessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - db.adminCommand('ping')
+          initialDelaySeconds: {{ .Values.mongodb.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.mongodb.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.mongodb.livenessProbe.timeoutSeconds }}
+      volumes:
+      - name: mongo-storage
+        persistentVolumeClaim:
+          claimName: mongo-order-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-order
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: mongodb-order
+  ports:
+    - port: 27017
+      targetPort: 27017
+  type: ClusterIP

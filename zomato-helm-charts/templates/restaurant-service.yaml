@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-service
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.restaurantService.replicas }}
+  selector:
+    matchLabels:
+      app: restaurant-service
+  template:
+    metadata:
+      labels:
+        app: restaurant-service
+    spec:
+      initContainers:
+      - name: wait-for-mongo
+        image: busybox
+        command: ['sh', '-c', 'until nc -z mongodb-restaurant 27017; do echo waiting for mongodb; sleep 2; done']
+      containers:
+      - name: restaurant-service
+        image: {{ .Values.restaurantService.image }}:{{ .Values.restaurantService.tag }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: {{ .Values.restaurantService.port }}
+        env:
+        - name: MONGODB_URL
+          value: {{ .Values.restaurantService.env.mongodbUrl }}
+        - name: DATABASE_NAME
+          value: {{ .Values.restaurantService.env.databaseName }}
+        - name: SECRET_KEY
+          value: {{ .Values.restaurantService.env.secretKey }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restaurant-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: restaurant-service
+  ports:
+    - port: {{ .Values.restaurantService.port }}
+      targetPort: {{ .Values.restaurantService.port }}
+  type: ClusterIP

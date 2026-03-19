@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.orderService.replicas }}
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      initContainers:
+      - name: wait-for-mongo
+        image: busybox
+        command: ['sh', '-c', 'until nc -z mongodb-order 27017; do echo waiting for mongodb; sleep 2; done']
+      containers:
+      - name: order-service
+        image: {{ .Values.orderService.image }}:{{ .Values.orderService.tag }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: {{ .Values.orderService.port }}
+        env:
+        - name: MONGODB_URL
+          value: {{ .Values.orderService.env.mongodbUrl }}
+        - name: DATABASE_NAME
+          value: {{ .Values.orderService.env.databaseName }}
+        - name: SECRET_KEY
+          value: {{ .Values.orderService.env.secretKey }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: order-service
+  ports:
+    - port: {{ .Values.orderService.port }}
+      targetPort: {{ .Values.orderService.port }}
+  type: ClusterIP
