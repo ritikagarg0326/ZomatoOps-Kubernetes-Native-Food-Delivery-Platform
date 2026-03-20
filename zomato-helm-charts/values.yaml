@@ -2,7 +2,7 @@ namespace: zomato-dev-helm
 
 userService:
   image: vero026/zomato-user-service
-  tag: latest
+  tag: "23335044435"
   replicas: 1
   port: 8001
   env:
@@ -12,7 +12,7 @@ userService:
 
 restaurantService:
   image: vero026/zomato-restaurant-service
-  tag: latest
+  tag: "23335044435"
   replicas: 1
   port: 8002
   env:
@@ -22,7 +22,7 @@ restaurantService:
 
 orderService:
   image: vero026/zomato-order-service
-  tag: latest
+  tag: "23335044435"
   replicas: 1
   port: 8003
   env:
@@ -32,20 +32,20 @@ orderService:
 
 frontend:
   image: vero026/zomato-frontend
-  tag: latest
+  tag: "23335044435"
   replicas: 1
   port: 4200
 
 nginx:
   image: vero026/zomato-nginx
-  tag: latest
+  tag: "23335044435"
   replicas: 1
   port: 80
   serviceType: NodePort
 
 mongodb:
   image: mongo
-  tag: "7"
+  tag: "23335044435"
   storage: 1Gi
   startupProbe:
     failureThreshold: 30
