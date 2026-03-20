@@ -164,47 +164,4 @@ jobs:
           git commit -m "ci: update image tags to ${{ github.run_id }}"
           git push
 
-# ─────────────────────────────────────────────
-# JOB 5 — DEPLOY (optional, for non-ArgoCD setups)
-# ─────────────────────────────────────────────
-
-  deploy:
-    name: 🚀 Deploy to Kubernetes
-    runs-on: ubuntu-latest
-    needs: update-helm-chart
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Configure kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: 'latest'
-
-      - name: Deploy via Helm
-        run: |
-          helm upgrade --install zomato ./zomato-helm-charts \
-            --namespace zomato-dev \
-            --create-namespace \
-            --set userService.tag=${{ github.run_id }} \
-            --set restaurantService.tag=${{ github.run_id }} \
-            --set orderService.tag=${{ github.run_id }} \
-            --set frontend.tag=${{ github.run_id }} \
-            --set nginx.tag=${{ github.run_id }} \
-            --wait --timeout=120s
-
-      - name: Verify deployment
-        run: kubectl get pods -n zomato-dev
+# ────
