@@ -101,40 +101,51 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # Push BOTH run_id tag (for traceability) AND latest tag (as fallback)
       - name: Build & Push user-service
         uses: docker/build-push-action@v6
         with:
           context: ./user-service
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/zomato-user-service:${{ github.run_id }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/zomato-user-service:${{ github.run_id }}
+            ${{ secrets.DOCKER_USERNAME }}/zomato-user-service:latest
 
       - name: Build & Push restaurant-service
         uses: docker/build-push-action@v6
         with:
           context: ./restaurant-service
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/zomato-restaurant-service:${{ github.run_id }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/zomato-restaurant-service:${{ github.run_id }}
+            ${{ secrets.DOCKER_USERNAME }}/zomato-restaurant-service:latest
 
       - name: Build & Push order-service
         uses: docker/build-push-action@v6
         with:
           context: ./order-service
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/zomato-order-service:${{ github.run_id }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/zomato-order-service:${{ github.run_id }}
+            ${{ secrets.DOCKER_USERNAME }}/zomato-order-service:latest
 
       - name: Build & Push frontend
         uses: docker/build-push-action@v6
         with:
           context: ./frontend
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/zomato-frontend:${{ github.run_id }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/zomato-frontend:${{ github.run_id }}
+            ${{ secrets.DOCKER_USERNAME }}/zomato-frontend:latest
 
       - name: Build & Push nginx
         uses: docker/build-push-action@v6
         with:
           context: ./nginx
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/zomato-nginx:${{ github.run_id }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/zomato-nginx:${{ github.run_id }}
+            ${{ secrets.DOCKER_USERNAME }}/zomato-nginx:latest
 
 # ─────────────────────────────────────────────
 # JOB 4 — UPDATE HELM CHART VALUES
@@ -152,9 +163,13 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
 
-      - name: Update image tags in values.yaml
+      - name: Update only service image tags (NOT mongodb)
         run: |
-          sed -i 's/tag: .*/tag: "${{ github.run_id }}"/' zomato-helm-charts/values.yaml
+          sed -i "/userService/,/tag:/ s/tag: .*/tag: \"${{ github.run_id }}\"/" zomato-helm-charts/values.yaml
+          sed -i "/restaurantService/,/tag:/ s/tag: .*/tag: \"${{ github.run_id }}\"/" zomato-helm-charts/values.yaml
+          sed -i "/orderService/,/tag:/ s/tag: .*/tag: \"${{ github.run_id }}\"/" zomato-helm-charts/values.yaml
+          sed -i "/^frontend/,/tag:/ s/tag: .*/tag: \"${{ github.run_id }}\"/" zomato-helm-charts/values.yaml
+          sed -i "/^nginx/,/tag:/ s/tag: .*/tag: \"${{ github.run_id }}\"/" zomato-helm-charts/values.yaml
 
       - name: Commit and push updated Helm values
         run: |
@@ -163,5 +178,3 @@ jobs:
           git add zomato-helm-charts/values.yaml
           git commit -m "ci: update image tags to ${{ github.run_id }}"
           git push
-
-# ────
