@@ -28,3 +28,14 @@ npm-debug.log*
 
 # Docker
 *.dockerignore
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# OS
+.DS_Store
+
+# Logs
+*.log
