@@ -2,7 +2,7 @@ namespace: zomato-dev
 
 userService:
   image: vero026/zomato-user-service
-  tag: "23345308194"
+  tag: "23379018320"
   replicas: 1
   port: 8001
   env:
@@ -12,7 +12,7 @@ userService:
 
 restaurantService:
   image: vero026/zomato-restaurant-service
-  tag: "23345308194"
+  tag: "23379018320"
   replicas: 1
   port: 8002
   env:
@@ -22,7 +22,7 @@ restaurantService:
 
 orderService:
   image: vero026/zomato-order-service
-  tag: "23345308194"
+  tag: "23379018320"
   replicas: 1
   port: 8003
   env:
@@ -32,13 +32,13 @@ orderService:
 
 frontend:
   image: vero026/zomato-frontend
-  tag: "23345308194"
+  tag: "23379018320"
   replicas: 1
   port: 4200
 
 nginx:
   image: vero026/zomato-nginx
-  tag: "23345308194"
+  tag: "23379018320"
   replicas: 1
   port: 80
   serviceType: NodePort
